@@ -3,10 +3,40 @@ import { generateID } from "../../assets/helper";
 import { Animal } from "../../redux/features/animals/types";
 import styles from "./MongoDBApp.module.scss";
 import Selection from "../../assets/Selection/Selection";
+import { useQuery, useMutation } from "react-query";
+import axios from "axios";
+import { queryClient } from "../../main";
 
-interface MongoDBAppParams {}
+const URL = "http://localhost:3000";
 
-const MongoDBApp = ({}: MongoDBAppParams) => {
+const MongoDBApp = () => {
+  const [animals, setAnimals] = useState<Animal[]>([]);
+
+  const animalQuery = useQuery({
+    queryKey: ["animals"],
+    queryFn: () => axios
+                    .get(URL + "/animals")
+                    .then(({ data }) => setAnimals(data as Animal[])),
+  });
+
+  const animalMutate = useMutation({
+    mutationFn: (animal: Animal) => axios.post(URL + "/animals", animal),
+    onSuccess: () => queryClient.invalidateQueries(["animals"]),
+  });
+
+  const animalMutateDel = useMutation({
+    mutationFn: (id: string) => axios.delete(URL + `/animals/${id}`),
+    onSuccess: () => queryClient.invalidateQueries(["animals"]),
+  });
+
+  if (animalQuery.isLoading) {
+    return <h1>Loading...</h1>;
+  }
+
+  if (animalQuery.isError) {
+    return <pre>{JSON.stringify(animalQuery.error)}</pre>;
+  }
+
   return (
     <div>
       <div className={styles.reactApp}>
@@ -55,17 +85,15 @@ const MongoDBApp = ({}: MongoDBAppParams) => {
               }
 
               const animal: Animal = {
-                _id: generateID(),
                 name: animalName.value,
-                class: animalClass.value,
+                animalClass: animalClass.value,
                 legCount: +animalLegCount.value,
                 diet: animalDiet.value,
                 endangerment: animalEndangerment.value,
               };
 
-              console.log(animal);
+              animalMutate.mutate(animal)
 
-              //dispatch(addAnimal(animal))
             }}
           >
             <input type="text" placeholder="Enter animal name" />
@@ -108,23 +136,6 @@ const MongoDBApp = ({}: MongoDBAppParams) => {
           <table className={styles.animalsTable}>
             <thead>
               <tr>
-                <td>
-                  <input type="text" className={styles.searchParam} />
-                </td>
-                <td>
-                  <input type="text" className={styles.searchParam} />
-                </td>
-                <td>
-                  <input type="number" className={styles.searchParam} />
-                </td>
-                <td>
-                  <input type="text" className={styles.searchParam} />
-                </td>
-                <td>
-                  <input type="text" className={styles.searchParam} />
-                </td>
-              </tr>
-              <tr>
                 <td className={styles.animalsHeadCell}>Name</td>
                 <td className={styles.animalsHeadCell}>Class</td>
                 <td className={styles.animalsHeadCell}>Leg count</td>
@@ -133,32 +144,20 @@ const MongoDBApp = ({}: MongoDBAppParams) => {
               </tr>
             </thead>
             <tbody>
-              {/* {animals.map(animal => {
-                        return (
-                        <tr>
-                            <td>
-                            {animal.name}
-                            </td>
-                            <td>
-                            {animal.class}
-                            </td>
-                            <td>
-                            {animal.legCount}
-                            </td>
-                            <td>
-                            {animal.diet}
-                            </td>
-                            <td>
-                            {animal.endangerment}
-                            </td>
-                            <td onClick={() => {
-                            dispatch(removeAnimal(animal._id))
-                            }}>
-                            Del
-                            </td>
-                        </tr>
-                        )
-                    })} */}
+              {animals.map((animal) => {
+                return (
+                  <tr>
+                    <td>{animal.name}</td>
+                    <td>{animal.animalClass}</td>
+                    <td>{animal.legCount}</td>
+                    <td>{animal.diet}</td>
+                    <td>{animal.endangerment}</td>
+                    <td onClick={() => {
+                        animalMutateDel.mutate(animal._id)
+                    }}>Del</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

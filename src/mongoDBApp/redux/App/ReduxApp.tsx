@@ -68,7 +68,7 @@ const ReduxApp = ({}:ReduxAppParams) => {
                   const animal:Animal = {
                     _id: generateID(),
                     name: animalName.value,
-                    class: animalClass.value,
+                    animalClass: animalClass.value,
                     legCount: +animalLegCount.value,
                     diet: animalDiet.value,
                     endangerment: animalEndangerment.value,
@@ -106,23 +106,6 @@ const ReduxApp = ({}:ReduxAppParams) => {
           <table className={styles.animalsTable}>
             <thead>
               <tr>
-                <td>
-                  <input type="text" className={styles.searchParam}/>
-                </td>
-                <td>
-                  <input type="text" className={styles.searchParam}/>
-                </td>
-                <td>
-                  <input type="number" className={styles.searchParam}/>
-                </td>
-                <td>
-                  <input type="text" className={styles.searchParam}/>
-                </td>
-                <td>
-                  <input type="text" className={styles.searchParam}/>
-                </td>
-              </tr>
-              <tr>
                 <td className={styles.animalsHeadCell}>
                   Name
                 </td>
@@ -148,7 +131,7 @@ const ReduxApp = ({}:ReduxAppParams) => {
                       {animal.name}
                     </td>
                     <td>
-                      {animal.class}
+                      {animal.animalClass}
                     </td>
                     <td>
                       {animal.legCount}
