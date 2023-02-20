@@ -1,0 +1,35 @@
+.App {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.reactApp {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: rgb(102, 0, 128);
+    width: 35%;
+    height: 100%;
+    padding: 20px;
+}
+
+.inputForm {
+    display: flex;
+    flex-direction: column;
+    padding: 50px 150px;
+    gap: 12px;
+}
+
+.animalsTable {
+    width: 100%;
+}
+
+.animalsHeadCell {
+    background-color: rgb(92, 85, 94);
+    width: 25%;
+}
+
+
+.searchParam {
+    width: 95%
+}
